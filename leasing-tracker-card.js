@@ -605,6 +605,39 @@ var Z = class extends G {
 			total_km: 1e4
 		};
 	}
+	static getConfigForm() {
+		return {
+			schema: [
+				{
+					name: "entity",
+					required: !0,
+					selector: { entity: { domain: "sensor" } }
+				},
+				{
+					name: "start_date",
+					required: !0,
+					selector: { text: { type: "date" } }
+				},
+				{
+					name: "end_date",
+					required: !0,
+					selector: { text: { type: "date" } }
+				},
+				{
+					name: "total_km",
+					required: !0,
+					selector: { number: {
+						min: 0,
+						step: 1,
+						mode: "box"
+					} }
+				}
+			],
+			assertConfig: (e) => {
+				if (!e.entity || !e.start_date || !e.end_date || e.total_km === void 0) throw Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
+			}
+		};
+	}
 	setConfig(e) {
 		if (!e.entity || !e.start_date || !e.end_date || e.total_km === void 0) throw Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
 		this.config = {
@@ -653,10 +686,14 @@ var Q = class extends G {
 	hass;
 	config = {};
 	setConfig(e) {
-		this.config = { ...e };
+		this.config = {
+			type: "custom:leasing-tracker-card",
+			...e
+		};
 	}
 	update(e, t) {
 		this.config = {
+			type: "custom:leasing-tracker-card",
 			...this.config,
 			[e]: t
 		}, this.dispatchEvent(new CustomEvent("config-changed", {

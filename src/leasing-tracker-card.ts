@@ -36,6 +36,22 @@ export class LeasingTrackerCard extends LitElement {
     };
   }
 
+  public static getConfigForm() {
+    return {
+      schema: [
+        { name: "entity", required: true, selector: { entity: { domain: "sensor" } } },
+        { name: "start_date", required: true, selector: { text: { type: "date" } } },
+        { name: "end_date", required: true, selector: { text: { type: "date" } } },
+        { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
+      ],
+      assertConfig: (config: Partial<LeasingTrackerConfig>) => {
+        if (!config.entity || !config.start_date || !config.end_date || config.total_km === undefined) {
+          throw new Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
+        }
+      },
+    };
+  }
+
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
     if (!config.entity || !config.start_date || !config.end_date || config.total_km === undefined) {
       throw new Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
@@ -105,11 +121,11 @@ export class LeasingTrackerCardEditor extends LitElement {
   @state() private config: Partial<LeasingTrackerConfig> = {};
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
-    this.config = { ...config };
+    this.config = { type: "custom:leasing-tracker-card", ...config };
   }
 
   private update(key: keyof LeasingTrackerConfig, value: string | number): void {
-    this.config = { ...this.config, [key]: value };
+    this.config = { type: "custom:leasing-tracker-card", ...this.config, [key]: value };
     this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: this.config }, bubbles: true, composed: true }));
   }
 
