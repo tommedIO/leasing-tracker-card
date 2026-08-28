@@ -77,7 +77,7 @@ export class LeasingTrackerCard extends LitElement {
   protected render() {
     if (!this.hass || !this.config) return html``;
     if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === undefined) {
-      return html`<ha-card header="Leasing Tracker"><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
+      return html`<ha-card><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
     }
     const entity = this.hass.states[this.config.entity];
     const current = Number(entity?.state);
@@ -90,7 +90,7 @@ export class LeasingTrackerCard extends LitElement {
     );
     const unit = entity?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
     return html`
-      <ha-card header="Leasing Tracker">
+      <ha-card>
         <div class="content">
           <div class="label">aktueller Kilometerstand</div>
           <div class="value">${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>

@@ -658,10 +658,10 @@ var Z = class extends G {
 	}
 	render() {
 		if (!this.hass || !this.config) return P``;
-		if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === void 0) return P`<ha-card header="Leasing Tracker"><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
+		if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === void 0) return P`<ha-card><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
 		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
 		return P`
-      <ha-card header="Leasing Tracker">
+      <ha-card>
         <div class="content">
           <div class="label">aktueller Kilometerstand</div>
           <div class="value">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
