@@ -634,13 +634,9 @@ var Z = class extends G {
 		] };
 	}
 	setConfig(e) {
-		if (!e.entity || !e.start_date || !e.end_date || e.total_km === void 0) throw Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
 		this.config = {
 			type: "custom:leasing-tracker-card",
-			entity: e.entity,
-			start_date: e.start_date,
-			end_date: e.end_date,
-			total_km: Number(e.total_km)
+			...e
 		};
 	}
 	connectedCallback() {
@@ -651,6 +647,7 @@ var Z = class extends G {
 	}
 	render() {
 		if (!this.hass || !this.config) return P``;
+		if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === void 0) return P`<ha-card header="Leasing Tracker"><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
 		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
 		return P`
       <ha-card header="Leasing Tracker">

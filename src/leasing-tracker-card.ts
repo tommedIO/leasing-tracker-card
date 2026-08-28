@@ -19,7 +19,7 @@ export interface LeasingTrackerConfig {
 @customElement("leasing-tracker-card")
 export class LeasingTrackerCard extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private config?: LeasingTrackerConfig;
+  @state() private config?: Partial<LeasingTrackerConfig>;
   private refreshTimer?: number;
 
   public static getConfigElement(): HTMLElement {
@@ -48,15 +48,9 @@ export class LeasingTrackerCard extends LitElement {
   }
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
-    if (!config.entity || !config.start_date || !config.end_date || config.total_km === undefined) {
-      throw new Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
-    }
     this.config = {
       type: "custom:leasing-tracker-card",
-      entity: config.entity,
-      start_date: config.start_date,
-      end_date: config.end_date,
-      total_km: Number(config.total_km),
+      ...config,
     };
   }
 
@@ -72,6 +66,9 @@ export class LeasingTrackerCard extends LitElement {
 
   protected render() {
     if (!this.hass || !this.config) return html``;
+    if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === undefined) {
+      return html`<ha-card header="Leasing Tracker"><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
+    }
     const entity = this.hass.states[this.config.entity];
     const current = Number(entity?.state);
     const target = calculateTargetKilometers(
