@@ -40,3 +40,12 @@ export function calculateTargetKilometers(
   const elapsed = now - start;
   return Math.round((elapsed / duration) * totalKilometers);
 }
+
+export function calculateExtraMileageCost(
+  currentKilometers: number,
+  targetKilometers: number,
+  costCentsPerKilometer: number,
+): number {
+  const extraKilometers = Math.max(0, currentKilometers - targetKilometers);
+  return (extraKilometers * costCentsPerKilometer) / 100;
+}

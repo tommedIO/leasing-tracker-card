@@ -22,12 +22,21 @@ The editor provides:
 - Leasing start date
 - Leasing end date
 - Total free kilometers for the complete lease
+- Cost of extra kilometers in ct/km
 
 The target is calculated in Home Assistant's configured time zone using:
 
 ```text
 round(((now - start_date) / (end_date - start_date)) * total_km)
 ```
+
+When the current odometer is above the target, extra mileage cost is calculated in euros as:
+
+```text
+max(0, current_km - target_km) * extra_km_cost_cents / 100
+```
+
+The current odometer is shown in red when it exceeds the target and in green otherwise.
 
 The card currently displays the entity's current value and the calculated target value. Dates outside the lease can intentionally produce values below zero or above the total, matching the formula.
 

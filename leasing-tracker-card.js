@@ -579,6 +579,9 @@ function Se(e, t, n, r, i) {
 	let s = e - a;
 	return Math.round(s / o * r);
 }
+function Ce(e, t, n) {
+	return Math.max(0, e - t) * n / 100;
+}
 //#endregion
 //#region \0@oxc-project+runtime@0.147.0/helpers/esm/decorate.js
 function X(e, t, n, r) {
@@ -599,7 +602,8 @@ var Z = class extends G {
 			entity: "sensor.example_odometer",
 			start_date: "2025-01-01",
 			end_date: "2026-01-01",
-			total_km: 1e4
+			total_km: 1e4,
+			extra_km_cost_cents: 10
 		};
 	}
 	static getConfigForm() {
@@ -628,6 +632,15 @@ var Z = class extends G {
 						step: 1,
 						mode: "box"
 					} }
+				},
+				{
+					name: "extra_km_cost_cents",
+					required: !0,
+					selector: { number: {
+						min: 0,
+						step: .01,
+						mode: "box"
+					} }
 				}
 			],
 			computeLabel: (e) => this.getConfigLabel(e.name)
@@ -638,7 +651,8 @@ var Z = class extends G {
 			entity: "Entität für aktuellen Kilometerstand des Fahrzeugs",
 			start_date: "Datum Start des Leasingzeitraums",
 			end_date: "Datum Ende des Leasingzeitraums",
-			total_km: "Erlaubte Kilometer während der Gesamtleasingzeit"
+			total_km: "Erlaubte Kilometer während der Gesamtleasingzeit",
+			extra_km_cost_cents: "Kosten Mehrkilometer (ct/km)"
 		}[e];
 	}
 	static getConfigElement() {
@@ -647,6 +661,7 @@ var Z = class extends G {
 	setConfig(e) {
 		this.config = {
 			type: "custom:leasing-tracker-card",
+			extra_km_cost_cents: 0,
 			...e
 		};
 	}
@@ -659,15 +674,26 @@ var Z = class extends G {
 	render() {
 		if (!this.hass || !this.config) return P``;
 		if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === void 0) return P`<ha-card><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
-		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
+		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi"), i = n === null || !Number.isFinite(t) || this.config.extra_km_cost_cents === void 0 ? null : Ce(t, n, this.config.extra_km_cost_cents);
 		return P`
       <ha-card>
         <div class="content">
-          <div class="label">aktueller Kilometerstand</div>
-          <div class="value">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
-          <div class="target">
-            <span>Sollkilometerstand</span>
-            <strong>${n === null ? "Ungültige Daten" : `${n.toLocaleString()} ${r}`}</strong>
+          <div class="mileage-grid">
+            <div class="metric">
+              <div class="label">aktueller Kilometerstand</div>
+              <div class="${n !== null && t > n ? "value value--over" : "value value--under"}">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
+            </div>
+            <div class="metric">
+              <div class="label">Sollkilometerstand</div>
+              <div class="value">${n === null ? "Ungültige Daten" : `${n.toLocaleString()} ${r}`}</div>
+            </div>
+          </div>
+          <div class="cost">
+            <span>Mehrkosten</span>
+            <strong>${i === null ? "Nicht verfügbar" : `${i.toLocaleString(void 0, {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		})} €`}</strong>
           </div>
         </div>
       </ha-card>
@@ -677,11 +703,15 @@ var Z = class extends G {
     :host { display: block; }
     .content { padding: 16px; }
     .label { color: var(--secondary-text-color); font-size: 14px; }
-    .value { color: var(--primary-text-color); font-size: 32px; font-weight: 600; margin: 8px 0 16px; }
+    .mileage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .metric { min-width: 0; }
+    .value { color: var(--primary-text-color); font-size: 32px; font-weight: 600; margin-top: 8px; }
     .value span { font-size: 16px; font-weight: 400; }
-    .target { border-top: 1px solid var(--divider-color); display: flex; justify-content: space-between; gap: 16px; padding-top: 12px; }
-    .target span { color: var(--secondary-text-color); }
-    .target strong { color: var(--primary-text-color); }
+    .value--over { color: var(--error-color, #db4437); }
+    .value--under { color: var(--success-color, #43a047); }
+    .cost { border-top: 1px solid var(--divider-color); display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; padding-top: 12px; }
+    .cost span { color: var(--secondary-text-color); }
+    .cost strong { color: var(--primary-text-color); }
   `;
 };
 X([q({ attribute: !1 })], Z.prototype, "hass", void 0), X([J()], Z.prototype, "config", void 0), Z = X([K("leasing-tracker-card")], Z);
@@ -691,6 +721,7 @@ var Q = class extends G {
 	setConfig(e) {
 		this.config = {
 			type: "custom:leasing-tracker-card",
+			extra_km_cost_cents: 0,
 			...e
 		};
 	}
@@ -716,6 +747,15 @@ var Q = class extends G {
 			selector: { number: {
 				min: 0,
 				step: 1,
+				mode: "box"
+			} }
+		},
+		{
+			name: "extra_km_cost_cents",
+			required: !0,
+			selector: { number: {
+				min: 0,
+				step: .01,
 				mode: "box"
 			} }
 		}

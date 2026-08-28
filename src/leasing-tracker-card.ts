@@ -1,6 +1,6 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { calculateTargetKilometers } from "./mileage.js";
+import { calculateExtraMileageCost, calculateTargetKilometers } from "./mileage.js";
 
 interface HomeAssistant {
   states: Record<string, { state: string; attributes: { unit_of_measurement?: string; friendly_name?: string } }>;
@@ -14,6 +14,7 @@ export interface LeasingTrackerConfig {
   start_date: string;
   end_date: string;
   total_km: number;
+  extra_km_cost_cents: number;
 }
 
 @customElement("leasing-tracker-card")
@@ -29,6 +30,7 @@ export class LeasingTrackerCard extends LitElement {
       start_date: "2025-01-01",
       end_date: "2026-01-01",
       total_km: 10_000,
+      extra_km_cost_cents: 10,
     };
   }
 
@@ -39,6 +41,7 @@ export class LeasingTrackerCard extends LitElement {
         { name: "start_date", required: true, selector: { date: {} } },
         { name: "end_date", required: true, selector: { date: {} } },
         { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
+        { name: "extra_km_cost_cents", required: true, selector: { number: { min: 0, step: 0.01, mode: "box" } } },
       ],
       computeLabel: (schema: { name: string }) => this.getConfigLabel(schema.name),
     };
@@ -50,6 +53,7 @@ export class LeasingTrackerCard extends LitElement {
       start_date: "Datum Start des Leasingzeitraums",
       end_date: "Datum Ende des Leasingzeitraums",
       total_km: "Erlaubte Kilometer während der Gesamtleasingzeit",
+      extra_km_cost_cents: "Kosten Mehrkilometer (ct/km)",
     }[name];
   }
 
@@ -60,6 +64,7 @@ export class LeasingTrackerCard extends LitElement {
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
     this.config = {
       type: "custom:leasing-tracker-card",
+      extra_km_cost_cents: 0,
       ...config,
     };
   }
@@ -89,14 +94,26 @@ export class LeasingTrackerCard extends LitElement {
       this.hass.config.time_zone,
     );
     const unit = entity?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
+    const extraCost = target === null || !Number.isFinite(current) || this.config.extra_km_cost_cents === undefined
+      ? null
+      : calculateExtraMileageCost(current, target, this.config.extra_km_cost_cents);
+    const currentClass = target !== null && current > target ? "value value--over" : "value value--under";
     return html`
       <ha-card>
         <div class="content">
-          <div class="label">aktueller Kilometerstand</div>
-          <div class="value">${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>
-          <div class="target">
-            <span>Sollkilometerstand</span>
-            <strong>${target === null ? "Ungültige Daten" : `${target.toLocaleString()} ${unit}`}</strong>
+          <div class="mileage-grid">
+            <div class="metric">
+              <div class="label">aktueller Kilometerstand</div>
+              <div class="${currentClass}">${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>
+            </div>
+            <div class="metric">
+              <div class="label">Sollkilometerstand</div>
+              <div class="value">${target === null ? "Ungültige Daten" : `${target.toLocaleString()} ${unit}`}</div>
+            </div>
+          </div>
+          <div class="cost">
+            <span>Mehrkosten</span>
+            <strong>${extraCost === null ? "Nicht verfügbar" : `${extraCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}</strong>
           </div>
         </div>
       </ha-card>
@@ -107,11 +124,15 @@ export class LeasingTrackerCard extends LitElement {
     :host { display: block; }
     .content { padding: 16px; }
     .label { color: var(--secondary-text-color); font-size: 14px; }
-    .value { color: var(--primary-text-color); font-size: 32px; font-weight: 600; margin: 8px 0 16px; }
+    .mileage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .metric { min-width: 0; }
+    .value { color: var(--primary-text-color); font-size: 32px; font-weight: 600; margin-top: 8px; }
     .value span { font-size: 16px; font-weight: 400; }
-    .target { border-top: 1px solid var(--divider-color); display: flex; justify-content: space-between; gap: 16px; padding-top: 12px; }
-    .target span { color: var(--secondary-text-color); }
-    .target strong { color: var(--primary-text-color); }
+    .value--over { color: var(--error-color, #db4437); }
+    .value--under { color: var(--success-color, #43a047); }
+    .cost { border-top: 1px solid var(--divider-color); display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; padding-top: 12px; }
+    .cost span { color: var(--secondary-text-color); }
+    .cost strong { color: var(--primary-text-color); }
   `;
 }
 
@@ -121,7 +142,7 @@ export class LeasingTrackerCardEditor extends LitElement {
   @state() private config: Partial<LeasingTrackerConfig> = {};
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
-    this.config = { type: "custom:leasing-tracker-card", ...config };
+    this.config = { type: "custom:leasing-tracker-card", extra_km_cost_cents: 0, ...config };
   }
 
   private readonly schema = [
@@ -129,6 +150,7 @@ export class LeasingTrackerCardEditor extends LitElement {
     { name: "start_date", required: true, selector: { date: {} } },
     { name: "end_date", required: true, selector: { date: {} } },
     { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
+    { name: "extra_km_cost_cents", required: true, selector: { number: { min: 0, step: 0.01, mode: "box" } } },
   ];
 
   private valueChanged(event: CustomEvent): void {
