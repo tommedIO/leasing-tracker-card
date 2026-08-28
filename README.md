@@ -40,6 +40,8 @@ The current odometer is shown in red when it exceeds the target and in green oth
 
 The card currently displays the entity's current value and the calculated target value. Dates outside the lease can intentionally produce values below zero or above the total, matching the formula.
 
+The card also shows a horizontal mileage bar. Its full width represents the allowed total kilometers. The current mileage is filled proportionally in green while it is at or below the target, or in red when it exceeds the target. A vertical marker indicates the target mileage position.
+
 ## Development
 
 ```sh

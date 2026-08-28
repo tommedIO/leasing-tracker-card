@@ -1,6 +1,6 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { calculateExtraMileageCost, calculateTargetKilometers } from "./mileage.js";
+import { calculateExtraMileageCost, calculateMileagePercent, calculateTargetKilometers } from "./mileage.js";
 
 interface HomeAssistant {
   states: Record<string, { state: string; attributes: { unit_of_measurement?: string; friendly_name?: string } }>;
@@ -98,6 +98,8 @@ export class LeasingTrackerCard extends LitElement {
       ? null
       : calculateExtraMileageCost(current, target, this.config.extra_km_cost_cents);
     const currentClass = target !== null && current > target ? "value value--over" : "value value--under";
+    const currentPercent = calculateMileagePercent(current, this.config.total_km);
+    const targetPercent = target === null ? null : calculateMileagePercent(target, this.config.total_km);
     return html`
       <ha-card>
         <div class="content">
@@ -111,6 +113,12 @@ export class LeasingTrackerCard extends LitElement {
               <div class="value">${target === null ? "Ungültige Daten" : `${target.toLocaleString()} ${unit}`}</div>
             </div>
           </div>
+          ${currentPercent === null || targetPercent === null ? nothing : html`
+            <div class="mileage-bar" role="img" aria-label="Kilometerfortschritt">
+              <div class="mileage-bar__fill ${currentClass.includes("over") ? "mileage-bar__fill--over" : "mileage-bar__fill--under"}" style="width: ${currentPercent}%"></div>
+              <div class="mileage-bar__target" style="left: ${targetPercent}%"></div>
+            </div>
+          `}
           <div class="cost">
             <span>Mehrkosten</span>
             <strong>${extraCost === null ? "Nicht verfügbar" : `${extraCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}</strong>
@@ -130,6 +138,11 @@ export class LeasingTrackerCard extends LitElement {
     .value span { font-size: 16px; font-weight: 400; }
     .value--over { color: var(--error-color, #db4437); }
     .value--under { color: var(--success-color, #43a047); }
+    .mileage-bar { background: var(--divider-color); border-radius: 3px; height: 12px; margin-top: 24px; overflow: visible; position: relative; }
+    .mileage-bar__fill { border-radius: 3px; height: 100%; min-width: 0; }
+    .mileage-bar__fill--under { background: var(--success-color, #43a047); }
+    .mileage-bar__fill--over { background: var(--error-color, #db4437); }
+    .mileage-bar__target { background: var(--primary-text-color); height: 20px; position: absolute; top: -4px; transform: translateX(-1px); width: 2px; }
     .cost { border-top: 1px solid var(--divider-color); display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; padding-top: 12px; }
     .cost span { color: var(--secondary-text-color); }
     .cost strong { color: var(--primary-text-color); }

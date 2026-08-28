@@ -49,3 +49,11 @@ export function calculateExtraMileageCost(
   const extraKilometers = Math.max(0, currentKilometers - targetKilometers);
   return (extraKilometers * costCentsPerKilometer) / 100;
 }
+
+export function calculateMileagePercent(kilometers: number, totalKilometers: number): number | null {
+  if (!Number.isFinite(kilometers) || !Number.isFinite(totalKilometers) || totalKilometers <= 0) {
+    return null;
+  }
+
+  return Math.min(100, Math.max(0, (kilometers / totalKilometers) * 100));
+}

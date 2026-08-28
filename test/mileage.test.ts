@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateExtraMileageCost, calculateTargetKilometers } from "../src/mileage";
+import { calculateExtraMileageCost, calculateMileagePercent, calculateTargetKilometers } from "../src/mileage";
 
 describe("calculateTargetKilometers", () => {
   it("calculates the linear target for the middle of a lease", () => {
@@ -17,5 +17,12 @@ describe("calculateTargetKilometers", () => {
   it("calculates extra mileage cost in euros and never charges under target", () => {
     expect(calculateExtraMileageCost(12500, 12000, 15)).toBe(75);
     expect(calculateExtraMileageCost(12000, 12500, 15)).toBe(0);
+  });
+
+  it("calculates and clamps mileage bar positions", () => {
+    expect(calculateMileagePercent(2500, 10000)).toBe(25);
+    expect(calculateMileagePercent(12000, 10000)).toBe(100);
+    expect(calculateMileagePercent(-100, 10000)).toBe(0);
+    expect(calculateMileagePercent(100, 0)).toBeNull();
   });
 });

@@ -582,6 +582,9 @@ function Se(e, t, n, r, i) {
 function Ce(e, t, n) {
 	return Math.max(0, e - t) * n / 100;
 }
+function we(e, t) {
+	return !Number.isFinite(e) || !Number.isFinite(t) || t <= 0 ? null : Math.min(100, Math.max(0, e / t * 100));
+}
 //#endregion
 //#region \0@oxc-project+runtime@0.147.0/helpers/esm/decorate.js
 function X(e, t, n, r) {
@@ -674,20 +677,26 @@ var Z = class extends G {
 	render() {
 		if (!this.hass || !this.config) return P``;
 		if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === void 0) return P`<ha-card><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
-		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi"), i = n === null || !Number.isFinite(t) || this.config.extra_km_cost_cents === void 0 ? null : Ce(t, n, this.config.extra_km_cost_cents);
+		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi"), i = n === null || !Number.isFinite(t) || this.config.extra_km_cost_cents === void 0 ? null : Ce(t, n, this.config.extra_km_cost_cents), a = n !== null && t > n ? "value value--over" : "value value--under", o = we(t, this.config.total_km), s = n === null ? null : we(n, this.config.total_km);
 		return P`
       <ha-card>
         <div class="content">
           <div class="mileage-grid">
             <div class="metric">
               <div class="label">aktueller Kilometerstand</div>
-              <div class="${n !== null && t > n ? "value value--over" : "value value--under"}">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
+              <div class="${a}">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
             </div>
             <div class="metric">
               <div class="label">Sollkilometerstand</div>
               <div class="value">${n === null ? "Ungültige Daten" : `${n.toLocaleString()} ${r}`}</div>
             </div>
           </div>
+          ${o === null || s === null ? I : P`
+            <div class="mileage-bar" role="img" aria-label="Kilometerfortschritt">
+              <div class="mileage-bar__fill ${a.includes("over") ? "mileage-bar__fill--over" : "mileage-bar__fill--under"}" style="width: ${o}%"></div>
+              <div class="mileage-bar__target" style="left: ${s}%"></div>
+            </div>
+          `}
           <div class="cost">
             <span>Mehrkosten</span>
             <strong>${i === null ? "Nicht verfügbar" : `${i.toLocaleString(void 0, {
@@ -709,6 +718,11 @@ var Z = class extends G {
     .value span { font-size: 16px; font-weight: 400; }
     .value--over { color: var(--error-color, #db4437); }
     .value--under { color: var(--success-color, #43a047); }
+    .mileage-bar { background: var(--divider-color); border-radius: 3px; height: 12px; margin-top: 24px; overflow: visible; position: relative; }
+    .mileage-bar__fill { border-radius: 3px; height: 100%; min-width: 0; }
+    .mileage-bar__fill--under { background: var(--success-color, #43a047); }
+    .mileage-bar__fill--over { background: var(--error-color, #db4437); }
+    .mileage-bar__target { background: var(--primary-text-color); height: 20px; position: absolute; top: -4px; transform: translateX(-1px); width: 2px; }
     .cost { border-top: 1px solid var(--divider-color); display: flex; justify-content: space-between; gap: 16px; margin-top: 20px; padding-top: 12px; }
     .cost span { color: var(--secondary-text-color); }
     .cost strong { color: var(--primary-text-color); }
