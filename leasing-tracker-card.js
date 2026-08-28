@@ -598,10 +598,10 @@ var Z = class extends G {
 	}
 	static getStubConfig() {
 		return {
-			entity: "",
-			start_date: "",
-			end_date: "",
-			total_km: 0
+			entity: "sensor.example_odometer",
+			start_date: "2025-01-01",
+			end_date: "2026-01-01",
+			total_km: 1e4
 		};
 	}
 	setConfig(e) {

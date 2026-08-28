@@ -27,7 +27,12 @@ export class LeasingTrackerCard extends LitElement {
   }
 
   public static getStubConfig(): Partial<LeasingTrackerConfig> {
-    return { entity: "", start_date: "", end_date: "", total_km: 0 };
+    return {
+      entity: "sensor.example_odometer",
+      start_date: "2025-01-01",
+      end_date: "2026-01-01",
+      total_km: 10_000,
+    };
   }
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
