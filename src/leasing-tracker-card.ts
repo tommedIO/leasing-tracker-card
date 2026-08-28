@@ -40,7 +40,17 @@ export class LeasingTrackerCard extends LitElement {
         { name: "end_date", required: true, selector: { date: {} } },
         { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
       ],
+      computeLabel: (schema: { name: string }) => this.getConfigLabel(schema.name),
     };
+  }
+
+  public static getConfigLabel(name: string): string | undefined {
+    return {
+      entity: "Entität für aktuellen Kilometerstand des Fahrzeugs",
+      start_date: "Datum Start des Leasingzeitraums",
+      end_date: "Datum Ende des Leasingzeitraums",
+      total_km: "Erlaubte Kilometer während der Gesamtleasingzeit",
+    }[name];
   }
 
   public static getConfigElement(): HTMLElement {
@@ -79,12 +89,10 @@ export class LeasingTrackerCard extends LitElement {
       this.hass.config.time_zone,
     );
     const unit = entity?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
-    const name = entity?.attributes.friendly_name || this.config.entity;
-
     return html`
       <ha-card header="Leasing Tracker">
         <div class="content">
-          <div class="label">${name}</div>
+          <div class="label">aktueller Kilometerstand</div>
           <div class="value">${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>
           <div class="target">
             <span>Sollkilometerstand</span>
@@ -139,6 +147,7 @@ export class LeasingTrackerCardEditor extends LitElement {
         .hass=${this.hass}
         .data=${this.config}
         .schema=${this.schema}
+        .computeLabel=${(schema: { name: string }) => LeasingTrackerCard.getConfigLabel(schema.name)}
         @value-changed=${this.valueChanged}
       ></ha-form>
     `;

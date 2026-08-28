@@ -603,32 +603,43 @@ var Z = class extends G {
 		};
 	}
 	static getConfigForm() {
-		return { schema: [
-			{
-				name: "entity",
-				required: !0,
-				selector: { entity: { domain: "sensor" } }
-			},
-			{
-				name: "start_date",
-				required: !0,
-				selector: { date: {} }
-			},
-			{
-				name: "end_date",
-				required: !0,
-				selector: { date: {} }
-			},
-			{
-				name: "total_km",
-				required: !0,
-				selector: { number: {
-					min: 0,
-					step: 1,
-					mode: "box"
-				} }
-			}
-		] };
+		return {
+			schema: [
+				{
+					name: "entity",
+					required: !0,
+					selector: { entity: { domain: "sensor" } }
+				},
+				{
+					name: "start_date",
+					required: !0,
+					selector: { date: {} }
+				},
+				{
+					name: "end_date",
+					required: !0,
+					selector: { date: {} }
+				},
+				{
+					name: "total_km",
+					required: !0,
+					selector: { number: {
+						min: 0,
+						step: 1,
+						mode: "box"
+					} }
+				}
+			],
+			computeLabel: (e) => this.getConfigLabel(e.name)
+		};
+	}
+	static getConfigLabel(e) {
+		return {
+			entity: "Entität für aktuellen Kilometerstand des Fahrzeugs",
+			start_date: "Datum Start des Leasingzeitraums",
+			end_date: "Datum Ende des Leasingzeitraums",
+			total_km: "Erlaubte Kilometer während der Gesamtleasingzeit"
+		}[e];
 	}
 	static getConfigElement() {
 		return document.createElement("leasing-tracker-card-editor");
@@ -652,7 +663,7 @@ var Z = class extends G {
 		return P`
       <ha-card header="Leasing Tracker">
         <div class="content">
-          <div class="label">${e?.attributes.friendly_name || this.config.entity}</div>
+          <div class="label">aktueller Kilometerstand</div>
           <div class="value">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
           <div class="target">
             <span>Sollkilometerstand</span>
@@ -725,6 +736,7 @@ var Q = class extends G {
         .hass=${this.hass}
         .data=${this.config}
         .schema=${this.schema}
+        .computeLabel=${(e) => Z.getConfigLabel(e.name)}
         @value-changed=${this.valueChanged}
       ></ha-form>
     ` : I;
