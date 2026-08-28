@@ -1,0 +1,25 @@
+{
+  "name": "leasing-tracker-card",
+  "version": "0.1.0",
+  "description": "A Home Assistant Lovelace card for tracking leasing mileage.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": ["home-assistant", "lovelace", "custom-card", "hacs"],
+  "license": "MIT",
+  "files": ["leasing-tracker-card.js"],
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "lit": "^3.2.1"
+  }
+}
