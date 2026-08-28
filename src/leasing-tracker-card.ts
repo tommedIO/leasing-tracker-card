@@ -22,10 +22,6 @@ export class LeasingTrackerCard extends LitElement {
   @state() private config?: Partial<LeasingTrackerConfig>;
   private refreshTimer?: number;
 
-  public static getConfigElement(): HTMLElement {
-    return document.createElement("leasing-tracker-card-editor");
-  }
-
   public static getStubConfig(): LeasingTrackerConfig {
     return {
       type: "custom:leasing-tracker-card",
@@ -40,8 +36,8 @@ export class LeasingTrackerCard extends LitElement {
     return {
       schema: [
         { name: "entity", required: true, selector: { entity: { domain: "sensor" } } },
-        { name: "start_date", required: true, selector: { text: { type: "date" } } },
-        { name: "end_date", required: true, selector: { text: { type: "date" } } },
+        { name: "start_date", required: true, selector: { date: {} } },
+        { name: "end_date", required: true, selector: { date: {} } },
         { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
       ],
     };
@@ -107,52 +103,9 @@ export class LeasingTrackerCard extends LitElement {
   `;
 }
 
-@customElement("leasing-tracker-card-editor")
-export class LeasingTrackerCardEditor extends LitElement {
-  @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private config: Partial<LeasingTrackerConfig> = {};
-
-  public setConfig(config: Partial<LeasingTrackerConfig>): void {
-    this.config = { type: "custom:leasing-tracker-card", ...config };
-  }
-
-  private update(key: keyof LeasingTrackerConfig, value: string | number): void {
-    this.config = { type: "custom:leasing-tracker-card", ...this.config, [key]: value };
-    this.dispatchEvent(new CustomEvent("config-changed", { detail: { config: this.config }, bubbles: true, composed: true }));
-  }
-
-  protected render() {
-    const entities = Object.entries(this.hass?.states ?? {}).filter(([id]) => id.startsWith("sensor."));
-    return html`
-      <div class="form">
-        <label>Entität aktueller Kilometerstand
-          <input list="odometer-entities" .value=${this.config.entity ?? ""} @change=${(event: Event) => this.update("entity", (event.target as HTMLInputElement).value)} placeholder="sensor.fahrzeug_kilometerstand" />
-          <datalist id="odometer-entities">${entities.map(([id, state]) => html`<option value=${id}>${state.attributes.friendly_name ?? id}</option>`)}</datalist>
-        </label>
-        <label>Leasing-Startdatum
-          <input type="date" .value=${this.config.start_date ?? ""} @change=${(event: Event) => this.update("start_date", (event.target as HTMLInputElement).value)} />
-        </label>
-        <label>Leasing-Enddatum
-          <input type="date" .value=${this.config.end_date ?? ""} @change=${(event: Event) => this.update("end_date", (event.target as HTMLInputElement).value)} />
-        </label>
-        <label>Freikilometer gesamt
-          <input type="number" min="0" step="1" .value=${String(this.config.total_km ?? "")} @change=${(event: Event) => this.update("total_km", Number((event.target as HTMLInputElement).value))} />
-        </label>
-      </div>
-    `;
-  }
-
-  static styles = css`
-    .form { display: grid; gap: 16px; }
-    label { color: var(--primary-text-color); display: grid; font-size: 14px; gap: 6px; }
-    input { background: var(--secondary-background-color); border: 1px solid var(--divider-color); border-radius: 4px; box-sizing: border-box; color: var(--primary-text-color); font: inherit; min-height: 40px; padding: 8px; width: 100%; }
-  `;
-}
-
 declare global {
   interface HTMLElementTagNameMap {
     "leasing-tracker-card": LeasingTrackerCard;
-    "leasing-tracker-card-editor": LeasingTrackerCardEditor;
   }
 }
 
