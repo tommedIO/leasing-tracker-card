@@ -598,6 +598,7 @@ var Z = class extends G {
 	}
 	static getStubConfig() {
 		return {
+			type: "custom:leasing-tracker-card",
 			entity: "sensor.example_odometer",
 			start_date: "2025-01-01",
 			end_date: "2026-01-01",

@@ -26,8 +26,9 @@ export class LeasingTrackerCard extends LitElement {
     return document.createElement("leasing-tracker-card-editor");
   }
 
-  public static getStubConfig(): Partial<LeasingTrackerConfig> {
+  public static getStubConfig(): LeasingTrackerConfig {
     return {
+      type: "custom:leasing-tracker-card",
       entity: "sensor.example_odometer",
       start_date: "2025-01-01",
       end_date: "2026-01-01",
