@@ -691,7 +691,7 @@ var $ = class extends K {
   `;
 };
 Z([J({ attribute: !1 })], $.prototype, "hass", void 0), Z([Y()], $.prototype, "config", void 0), $ = Z([q("leasing-tracker-card-editor")], $), window.customCards = [...window.customCards ?? [], {
-	type: "custom:leasing-tracker-card",
+	type: "leasing-tracker-card",
 	name: "Leasing Tracker Card",
 	description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand."
 }];

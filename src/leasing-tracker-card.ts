@@ -144,5 +144,5 @@ declare global {
 
 (window as unknown as { customCards?: unknown[] }).customCards = [
   ...(((window as unknown as { customCards?: unknown[] }).customCards) ?? []),
-  { type: "custom:leasing-tracker-card", name: "Leasing Tracker Card", description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand." },
+  { type: "leasing-tracker-card", name: "Leasing Tracker Card", description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand." },
 ];
