@@ -25,6 +25,7 @@ The editor provides:
 - Cost of extra kilometers in ct/km
 - Whether to show the numeric mileage values
 - Whether to show the graphical mileage bar
+- Whether to show extra mileage costs and the separator line
 
 The target is calculated in Home Assistant's configured time zone using:
 

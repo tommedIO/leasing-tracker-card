@@ -17,6 +17,7 @@ export interface LeasingTrackerConfig {
   extra_km_cost_cents: number;
   show_values: boolean;
   show_graph: boolean;
+  show_extra_cost: boolean;
 }
 
 @customElement("leasing-tracker-card")
@@ -35,21 +36,7 @@ export class LeasingTrackerCard extends LitElement {
       extra_km_cost_cents: 10,
       show_values: true,
       show_graph: true,
-    };
-  }
-
-  public static getConfigForm() {
-    return {
-      schema: [
-        { name: "entity", required: true, selector: { entity: { domain: "sensor" } } },
-        { name: "start_date", required: true, selector: { date: {} } },
-        { name: "end_date", required: true, selector: { date: {} } },
-        { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
-        { name: "extra_km_cost_cents", required: true, selector: { number: { min: 0, step: 0.01, mode: "box" } } },
-        { name: "show_values", selector: { boolean: {} } },
-        { name: "show_graph", selector: { boolean: {} } },
-      ],
-      computeLabel: (schema: { name: string }) => this.getConfigLabel(schema.name),
+      show_extra_cost: true,
     };
   }
 
@@ -62,6 +49,7 @@ export class LeasingTrackerCard extends LitElement {
       extra_km_cost_cents: "Kosten Mehrkilometer (ct/km)",
       show_values: "Zahlenwerte anzeigen",
       show_graph: "Grafische Darstellung anzeigen",
+      show_extra_cost: "Mehrkosten anzeigen",
     }[name];
   }
 
@@ -75,6 +63,7 @@ export class LeasingTrackerCard extends LitElement {
       extra_km_cost_cents: 0,
       show_values: true,
       show_graph: true,
+      show_extra_cost: true,
       ...config,
     };
   }
@@ -123,16 +112,18 @@ export class LeasingTrackerCard extends LitElement {
               <div class="value">${target === null ? "Ungültige Daten" : `${target.toLocaleString()} ${unit}`}</div>
             </div>
           </div>` : nothing}
-          ${this.config.show_graph !== false && (currentPercent === null || targetPercent === null ? nothing : html`
+          ${this.config.show_graph !== false ? (currentPercent === null || targetPercent === null ? nothing : html`
             <div class="mileage-bar" role="img" aria-label="Kilometerfortschritt">
               <div class="mileage-bar__fill ${currentClass.includes("over") ? "mileage-bar__fill--over" : "mileage-bar__fill--under"}" style="width: ${currentPercent}%"></div>
               <div class="mileage-bar__target" style="left: ${targetPercent}%"></div>
             </div>
-          `)}
-          <div class="cost">
-            <span>Mehrkosten</span>
-            <strong>${extraCost === null ? "Nicht verfügbar" : `${extraCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}</strong>
-          </div>
+          `) : nothing}
+          ${this.config.show_extra_cost !== false ? html`
+            <div class="cost">
+              <span>Mehrkosten</span>
+              <strong>${extraCost === null ? "Nicht verfügbar" : `${extraCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}</strong>
+            </div>
+          ` : nothing}
         </div>
       </ha-card>
     `;
@@ -182,10 +173,11 @@ export class LeasingTrackerCardEditor extends LitElement {
     { name: "extra_km_cost_cents", required: true, selector: { number: { min: 0, step: 0.01, mode: "box" } } },
     { name: "show_values", selector: { boolean: {} } },
     { name: "show_graph", selector: { boolean: {} } },
+    { name: "show_extra_cost", selector: { boolean: {} } },
   ];
 
   private valueChanged(event: CustomEvent): void {
-    this.config = { type: "custom:leasing-tracker-card", show_values: true, show_graph: true, ...this.config, ...event.detail.value };
+    this.config = { type: "custom:leasing-tracker-card", show_values: true, show_graph: true, show_extra_cost: true, ...this.config, ...event.detail.value };
     this.dispatchEvent(new CustomEvent("config-changed", {
       detail: { config: this.config },
       bubbles: true,
