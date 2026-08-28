@@ -1,4 +1,4 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { calculateTargetKilometers } from "./mileage.js";
 
@@ -41,6 +41,10 @@ export class LeasingTrackerCard extends LitElement {
         { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
       ],
     };
+  }
+
+  public static getConfigElement(): HTMLElement {
+    return document.createElement("leasing-tracker-card-editor");
   }
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
@@ -103,9 +107,48 @@ export class LeasingTrackerCard extends LitElement {
   `;
 }
 
+@customElement("leasing-tracker-card-editor")
+export class LeasingTrackerCardEditor extends LitElement {
+  @property({ attribute: false }) public hass?: HomeAssistant;
+  @state() private config: Partial<LeasingTrackerConfig> = {};
+
+  public setConfig(config: Partial<LeasingTrackerConfig>): void {
+    this.config = { type: "custom:leasing-tracker-card", ...config };
+  }
+
+  private readonly schema = [
+    { name: "entity", required: true, selector: { entity: { domain: "sensor" } } },
+    { name: "start_date", required: true, selector: { date: {} } },
+    { name: "end_date", required: true, selector: { date: {} } },
+    { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
+  ];
+
+  private valueChanged(event: CustomEvent): void {
+    this.config = { type: "custom:leasing-tracker-card", ...event.detail.value };
+    this.dispatchEvent(new CustomEvent("config-changed", {
+      detail: { config: this.config },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
+  protected render() {
+    if (!this.hass) return nothing;
+    return html`
+      <ha-form
+        .hass=${this.hass}
+        .data=${this.config}
+        .schema=${this.schema}
+        @value-changed=${this.valueChanged}
+      ></ha-form>
+    `;
+  }
+}
+
 declare global {
   interface HTMLElementTagNameMap {
     "leasing-tracker-card": LeasingTrackerCard;
+    "leasing-tracker-card-editor": LeasingTrackerCardEditor;
   }
 }
 
