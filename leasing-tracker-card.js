@@ -606,7 +606,9 @@ var Z = class extends G {
 			start_date: "2025-01-01",
 			end_date: "2026-01-01",
 			total_km: 1e4,
-			extra_km_cost_cents: 10
+			extra_km_cost_cents: 10,
+			show_values: !0,
+			show_graph: !0
 		};
 	}
 	static getConfigForm() {
@@ -644,6 +646,14 @@ var Z = class extends G {
 						step: .01,
 						mode: "box"
 					} }
+				},
+				{
+					name: "show_values",
+					selector: { boolean: {} }
+				},
+				{
+					name: "show_graph",
+					selector: { boolean: {} }
 				}
 			],
 			computeLabel: (e) => this.getConfigLabel(e.name)
@@ -655,7 +665,9 @@ var Z = class extends G {
 			start_date: "Datum Start des Leasingzeitraums",
 			end_date: "Datum Ende des Leasingzeitraums",
 			total_km: "Erlaubte Kilometer während der Gesamtleasingzeit",
-			extra_km_cost_cents: "Kosten Mehrkilometer (ct/km)"
+			extra_km_cost_cents: "Kosten Mehrkilometer (ct/km)",
+			show_values: "Zahlenwerte anzeigen",
+			show_graph: "Grafische Darstellung anzeigen"
 		}[e];
 	}
 	static getConfigElement() {
@@ -665,6 +677,8 @@ var Z = class extends G {
 		this.config = {
 			type: "custom:leasing-tracker-card",
 			extra_km_cost_cents: 0,
+			show_values: !0,
+			show_graph: !0,
 			...e
 		};
 	}
@@ -681,7 +695,7 @@ var Z = class extends G {
 		return P`
       <ha-card>
         <div class="content">
-          <div class="mileage-grid">
+          ${this.config.show_values === !1 ? I : P`<div class="mileage-grid">
             <div class="metric">
               <div class="label">aktueller Kilometerstand</div>
               <div class="${a}">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
@@ -690,13 +704,13 @@ var Z = class extends G {
               <div class="label">Sollkilometerstand</div>
               <div class="value">${n === null ? "Ungültige Daten" : `${n.toLocaleString()} ${r}`}</div>
             </div>
-          </div>
-          ${o === null || s === null ? I : P`
+          </div>`}
+          ${this.config.show_graph !== !1 && (o === null || s === null ? I : P`
             <div class="mileage-bar" role="img" aria-label="Kilometerfortschritt">
               <div class="mileage-bar__fill ${a.includes("over") ? "mileage-bar__fill--over" : "mileage-bar__fill--under"}" style="width: ${o}%"></div>
               <div class="mileage-bar__target" style="left: ${s}%"></div>
             </div>
-          `}
+          `)}
           <div class="cost">
             <span>Mehrkosten</span>
             <strong>${i === null ? "Nicht verfügbar" : `${i.toLocaleString(void 0, {
@@ -736,6 +750,8 @@ var Q = class extends G {
 		this.config = {
 			type: "custom:leasing-tracker-card",
 			extra_km_cost_cents: 0,
+			show_values: !0,
+			show_graph: !0,
 			...e
 		};
 	}
@@ -772,11 +788,22 @@ var Q = class extends G {
 				step: .01,
 				mode: "box"
 			} }
+		},
+		{
+			name: "show_values",
+			selector: { boolean: {} }
+		},
+		{
+			name: "show_graph",
+			selector: { boolean: {} }
 		}
 	];
 	valueChanged(e) {
 		this.config = {
 			type: "custom:leasing-tracker-card",
+			show_values: !0,
+			show_graph: !0,
+			...this.config,
 			...e.detail.value
 		}, this.dispatchEvent(new CustomEvent("config-changed", {
 			detail: { config: this.config },

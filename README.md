@@ -23,6 +23,8 @@ The editor provides:
 - Leasing end date
 - Total free kilometers for the complete lease
 - Cost of extra kilometers in ct/km
+- Whether to show the numeric mileage values
+- Whether to show the graphical mileage bar
 
 The target is calculated in Home Assistant's configured time zone using:
 
@@ -37,6 +39,8 @@ max(0, current_km - target_km) * extra_km_cost_cents / 100
 ```
 
 The current odometer is shown in red when it exceeds the target and in green otherwise.
+
+The visual editor stores both display options with the card. They are enabled by default, including for cards created before these options were added.
 
 The card currently displays the entity's current value and the calculated target value. Dates outside the lease can intentionally produce values below zero or above the total, matching the formula.
 
