@@ -44,11 +44,6 @@ export class LeasingTrackerCard extends LitElement {
         { name: "end_date", required: true, selector: { text: { type: "date" } } },
         { name: "total_km", required: true, selector: { number: { min: 0, step: 1, mode: "box" } } },
       ],
-      assertConfig: (config: Partial<LeasingTrackerConfig>) => {
-        if (!config.entity || !config.start_date || !config.end_date || config.total_km === undefined) {
-          throw new Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum und Freikilometer.");
-        }
-      },
     };
   }
 
