@@ -14,7 +14,6 @@ export default defineConfig({
         inlineDynamicImports: true,
       },
     },
-    minify: "esbuild",
     sourcemap: true,
   },
   test: {
