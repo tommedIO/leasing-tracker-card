@@ -142,7 +142,11 @@ declare global {
   }
 }
 
-(window as unknown as { customCards?: unknown[] }).customCards = [
-  ...(((window as unknown as { customCards?: unknown[] }).customCards) ?? []),
-  { type: "leasing-tracker-card", name: "Leasing Tracker Card", description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand." },
-];
+const cardWindow = window as unknown as { customCards?: Array<Record<string, unknown>> };
+cardWindow.customCards = cardWindow.customCards ?? [];
+cardWindow.customCards.push({
+  type: "leasing-tracker-card",
+  name: "Leasing Tracker Card",
+  description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand.",
+  preview: false,
+});
