@@ -33,6 +33,8 @@ The target is calculated in Home Assistant's configured time zone using:
 round(((now - start_date) / (end_date - start_date)) * total_km)
 ```
 
+The target is bounded by the lease period: before the start date it is `0 km`, and after the end date it is the full allowed mileage. No interpolation is performed outside the lease dates.
+
 When the current odometer is above the target, extra mileage cost is calculated in euros as:
 
 ```text

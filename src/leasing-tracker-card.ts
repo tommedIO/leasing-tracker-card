@@ -161,6 +161,7 @@ export class LeasingTrackerCardEditor extends LitElement {
       extra_km_cost_cents: 0,
       show_values: true,
       show_graph: true,
+      show_extra_cost: true,
       ...config,
     };
   }
@@ -185,12 +186,26 @@ export class LeasingTrackerCardEditor extends LitElement {
     }));
   }
 
+  private get formData(): Partial<LeasingTrackerConfig> {
+    return {
+      type: "custom:leasing-tracker-card",
+      entity: this.config.entity ?? "",
+      start_date: this.config.start_date ?? "",
+      end_date: this.config.end_date ?? "",
+      total_km: this.config.total_km,
+      extra_km_cost_cents: this.config.extra_km_cost_cents ?? 0,
+      show_values: this.config.show_values !== false,
+      show_graph: this.config.show_graph !== false,
+      show_extra_cost: this.config.show_extra_cost !== false,
+    };
+  }
+
   protected render() {
     if (!this.hass) return nothing;
     return html`
       <ha-form
         .hass=${this.hass}
-        .data=${this.config}
+        .data=${this.formData}
         .schema=${this.schema}
         .computeLabel=${(schema: { name: string }) => LeasingTrackerCard.getConfigLabel(schema.name)}
         @value-changed=${this.valueChanged}

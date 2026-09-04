@@ -14,6 +14,11 @@ describe("calculateTargetKilometers", () => {
     expect(calculateTargetKilometers(Date.now(), "2026-01-01", "2025-01-01", 12000, "UTC")).toBeNull();
   });
 
+  it("clamps the target to the lease boundaries", () => {
+    expect(calculateTargetKilometers(Date.parse("2024-12-31T00:00:00Z"), "2025-01-01", "2026-01-01", 12000, "UTC")).toBe(0);
+    expect(calculateTargetKilometers(Date.parse("2026-01-02T00:00:00Z"), "2025-01-01", "2026-01-01", 12000, "UTC")).toBe(12000);
+  });
+
   it("calculates extra mileage cost in euros and never charges under target", () => {
     expect(calculateExtraMileageCost(12500, 12000, 15)).toBe(75);
     expect(calculateExtraMileageCost(12000, 12500, 15)).toBe(0);

@@ -574,10 +574,12 @@ function Y(e, t) {
 	return a + (a - Date.UTC(Number(s.year), Number(s.month) - 1, Number(s.day), Number(s.hour), Number(s.minute), Number(s.second)));
 }
 function Se(e, t, n, r, i) {
-	let a = Y(t, i), o = Y(n, i) - a;
-	if (!Number.isFinite(r) || o <= 0) return null;
-	let s = e - a;
-	return Math.round(s / o * r);
+	let a = Y(t, i), o = Y(n, i), s = o - a;
+	if (!Number.isFinite(r) || s <= 0) return null;
+	if (e <= a) return 0;
+	if (e >= o) return Math.round(r);
+	let c = e - a;
+	return Math.round(c / s * r);
 }
 function Ce(e, t, n) {
 	return Math.max(0, e - t) * n / 100;
@@ -709,6 +711,7 @@ var Q = class extends G {
 			extra_km_cost_cents: 0,
 			show_values: !0,
 			show_graph: !0,
+			show_extra_cost: !0,
 			...e
 		};
 	}
@@ -773,11 +776,24 @@ var Q = class extends G {
 			composed: !0
 		}));
 	}
+	get formData() {
+		return {
+			type: "custom:leasing-tracker-card",
+			entity: this.config.entity ?? "",
+			start_date: this.config.start_date ?? "",
+			end_date: this.config.end_date ?? "",
+			total_km: this.config.total_km,
+			extra_km_cost_cents: this.config.extra_km_cost_cents ?? 0,
+			show_values: this.config.show_values !== !1,
+			show_graph: this.config.show_graph !== !1,
+			show_extra_cost: this.config.show_extra_cost !== !1
+		};
+	}
 	render() {
 		return this.hass ? P`
       <ha-form
         .hass=${this.hass}
-        .data=${this.config}
+        .data=${this.formData}
         .schema=${this.schema}
         .computeLabel=${(e) => Z.getConfigLabel(e.name)}
         @value-changed=${this.valueChanged}

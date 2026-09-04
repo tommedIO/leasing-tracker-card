@@ -37,6 +37,13 @@ export function calculateTargetKilometers(
     return null;
   }
 
+  if (now <= start) {
+    return 0;
+  }
+  if (now >= end) {
+    return Math.round(totalKilometers);
+  }
+
   const elapsed = now - start;
   return Math.round((elapsed / duration) * totalKilometers);
 }
