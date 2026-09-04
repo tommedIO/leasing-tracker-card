@@ -58,14 +58,35 @@ export class LeasingTrackerCard extends LitElement {
   }
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
-    this.config = {
-      type: "custom:leasing-tracker-card",
+    const normalizedConfig = {
       extra_km_cost_cents: 0,
       show_values: true,
       show_graph: true,
       show_extra_cost: true,
       ...config,
     };
+
+    if (
+      !normalizedConfig.entity ||
+      !normalizedConfig.start_date ||
+      !normalizedConfig.end_date ||
+      normalizedConfig.total_km === undefined ||
+      !Number.isFinite(normalizedConfig.total_km) ||
+      normalizedConfig.total_km < 0 ||
+      !Number.isFinite(normalizedConfig.extra_km_cost_cents) ||
+      normalizedConfig.extra_km_cost_cents < 0
+    ) {
+      throw new Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum, Freikilometer und Kosten Mehrkilometer.");
+    }
+
+    this.config = {
+      type: "custom:leasing-tracker-card",
+      ...normalizedConfig,
+    };
+  }
+
+  public getCardSize(): number {
+    return 4;
   }
 
   public connectedCallback(): void {
@@ -227,5 +248,5 @@ cardWindow.customCards.push({
   type: "leasing-tracker-card",
   name: "Leasing Tracker Card",
   description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand.",
-  preview: false,
+  preview: true,
 });

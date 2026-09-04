@@ -18,6 +18,29 @@ A HACS-compatible Home Assistant Lovelace custom card that compares a vehicle's 
 	This resource entry is required once so Home Assistant can load and discover the card. It is not a YAML card configuration.
 4. Reload the browser, then add the card through the dashboard card picker. The visual editor configures all card fields.
 
+### Manual installation
+
+1. Download `leasing-tracker-card.js` from the [latest GitHub release](https://github.com/tommedIO/leasing-tracker-card/releases).
+2. Copy the file to the Home Assistant `config/www` directory.
+3. In **Settings > Dashboards > Resources**, add `/local/leasing-tracker-card.js` with type **JavaScript module**.
+4. Reload the browser and add the card to a dashboard.
+
+### YAML example
+
+Normal setup uses the visual editor. For dashboards managed as YAML, the equivalent configuration is:
+
+```yaml
+type: custom:leasing-tracker-card
+entity: sensor.vehicle_odometer
+start_date: "2025-01-01"
+end_date: "2026-01-01"
+total_km: 12000
+extra_km_cost_cents: 15
+show_values: true
+show_graph: true
+show_extra_cost: true
+```
+
 ## Configuration
 
 The editor provides:
