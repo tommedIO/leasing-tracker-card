@@ -1,5 +1,7 @@
 # Leasing Tracker Card
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A HACS-compatible Home Assistant Lovelace custom card that compares a vehicle's current odometer reading with its time-based target mileage.
 
 ## Installation with HACS
