@@ -8,6 +8,8 @@ A HACS-compatible Home Assistant Lovelace custom card that compares a vehicle's 
 
 ## Installation with HACS
 
+[![Add to HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?repository=tommedIO%2Fleasing-tracker-card)
+
 1. Open HACS and add `tommedIO/leasing-tracker-card` as a custom repository of type **Dashboard**.
 2. Install **Leasing Tracker Card**.
 3. Add the installed card as a Lovelace resource. In HACS, use **Add to Lovelace resources** if that action is available. Otherwise open **Settings > Dashboards > Resources > Add resource** and enter:
@@ -85,3 +87,8 @@ npm test
 ```
 
 The build output is `leasing-tracker-card.js` in the repository root, ready for HACS.
+
+## Links
+
+- [HACS validation action](https://github.com/tommedIO/leasing-tracker-card/actions/workflows/hacs.yml)
+- [GitHub releases](https://github.com/tommedIO/leasing-tracker-card/releases)
