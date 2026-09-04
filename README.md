@@ -4,6 +4,8 @@
 
 A HACS-compatible Home Assistant Lovelace custom card that compares a vehicle's current odometer reading with its time-based target mileage.
 
+![Leasing Tracker Card preview](leasing-tracker-card-preview.png)
+
 ## Installation with HACS
 
 1. Open HACS and add `tommedIO/leasing-tracker-card` as a custom repository of type **Dashboard**.
