@@ -56,6 +56,8 @@ The editor provides:
 - Whether to show the graphical mileage bar
 - Whether to show extra mileage costs and the separator line
 
+The card and visual editor use Home Assistant's configured language. German (`de`) and English (`en`) are supported; other languages fall back to English. Numeric and currency values follow the configured locale.
+
 The target is calculated in Home Assistant's configured time zone using:
 
 ```text

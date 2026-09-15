@@ -1,6 +1,6 @@
 {
   "name": "leasing-tracker-card",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A Home Assistant Lovelace card for tracking leasing mileage.",
   "type": "module",
   "scripts": {

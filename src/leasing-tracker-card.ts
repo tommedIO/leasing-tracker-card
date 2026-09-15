@@ -1,10 +1,12 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { calculateExtraMileageCost, calculateMileagePercent, calculateTargetKilometers } from "./mileage.js";
+import { localize, type TranslationKey } from "./localize/localize.js";
 
 interface HomeAssistant {
   states: Record<string, { state: string; attributes: { unit_of_measurement?: string; friendly_name?: string } }>;
   config: { time_zone: string; unit_system: { length: string } };
+  locale?: { language?: string; number_format?: string };
   callService?: (domain: string, service: string, data?: unknown) => void;
 }
 
@@ -40,17 +42,19 @@ export class LeasingTrackerCard extends LitElement {
     };
   }
 
-  public static getConfigLabel(name: string): string | undefined {
-    return {
-      entity: "Entität für aktuellen Kilometerstand des Fahrzeugs",
-      start_date: "Datum Start des Leasingzeitraums",
-      end_date: "Datum Ende des Leasingzeitraums",
-      total_km: "Erlaubte Kilometer während der Gesamtleasingzeit",
-      extra_km_cost_cents: "Kosten Mehrkilometer (ct/km)",
-      show_values: "Zahlenwerte anzeigen",
-      show_graph: "Grafische Darstellung anzeigen",
-      show_extra_cost: "Mehrkosten anzeigen",
-    }[name];
+  public static getConfigLabel(name: string, language?: string): string | undefined {
+    const keyMap: Record<string, TranslationKey> = {
+      entity: "entity",
+      start_date: "start_date",
+      end_date: "end_date",
+      total_km: "total_km",
+      extra_km_cost_cents: "extra_km_cost_cents",
+      show_values: "show_values",
+      show_graph: "show_graph",
+      show_extra_cost: "show_extra_cost",
+    };
+    const key = keyMap[name];
+    return key ? localize(key, language) : undefined;
   }
 
   public static getConfigElement(): HTMLElement {
@@ -111,7 +115,7 @@ export class LeasingTrackerCard extends LitElement {
   protected render() {
     if (!this.hass || !this.config) return html``;
     if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === undefined) {
-      return html`<ha-card><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
+      return html`<ha-card><div class="content">${localize("incomplete_config", this.hass.locale?.language)}</div></ha-card>`;
     }
     const entity = this.hass.states[this.config.entity];
     const current = Number(entity?.state);
@@ -123,6 +127,8 @@ export class LeasingTrackerCard extends LitElement {
       this.hass.config.time_zone,
     );
     const unit = entity?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi");
+    const language = this.hass.locale?.language;
+    const formatNumber = (value: number) => value.toLocaleString(language);
     const extraCost = target === null || !Number.isFinite(current) || this.config.extra_km_cost_cents === undefined
       ? null
       : calculateExtraMileageCost(current, target, this.config.extra_km_cost_cents);
@@ -134,7 +140,7 @@ export class LeasingTrackerCard extends LitElement {
         <div class="content">
           ${this.config.show_values !== false ? html`<div class="mileage-grid">
             <div class="metric">
-              <div class="label">aktueller Kilometerstand</div>
+              <div class="label">${localize("current_mileage", language)}</div>
               <div
                 class="${currentClass} value--interactive"
                 role="button"
@@ -143,23 +149,23 @@ export class LeasingTrackerCard extends LitElement {
                 @keydown=${(event: KeyboardEvent) => {
                   if (event.key === "Enter" || event.key === " ") this.openEntityDetails();
                 }}
-              >${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>
+              >${Number.isFinite(current) ? formatNumber(current) : localize("unavailable", language)} <span>${unit}</span></div>
             </div>
             <div class="metric">
-              <div class="label">Sollkilometerstand</div>
-              <div class="value">${target === null ? "Ungültige Daten" : `${target.toLocaleString()} ${unit}`}</div>
+              <div class="label">${localize("target_mileage", language)}</div>
+              <div class="value">${target === null ? localize("invalid_data", language) : `${formatNumber(target)} ${unit}`}</div>
             </div>
           </div>` : nothing}
           ${this.config.show_graph !== false ? (currentPercent === null || targetPercent === null ? nothing : html`
-            <div class="mileage-bar" role="img" aria-label="Kilometerfortschritt">
+            <div class="mileage-bar" role="img" aria-label=${localize("mileage_progress", language)}>
               <div class="mileage-bar__fill ${currentClass.includes("over") ? "mileage-bar__fill--over" : "mileage-bar__fill--under"}" style="width: ${currentPercent}%"></div>
               <div class="mileage-bar__target" style="left: ${targetPercent}%"></div>
             </div>
           `) : nothing}
           ${this.config.show_extra_cost !== false ? html`
             <div class="cost">
-              <span>Mehrkosten</span>
-              <strong>${extraCost === null ? "Nicht verfügbar" : `${extraCost.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}</strong>
+              <span>${localize("extra_cost", language)}</span>
+              <strong>${extraCost === null ? localize("unavailable", language) : `${extraCost.toLocaleString(language, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}</strong>
             </div>
           ` : nothing}
         </div>
@@ -247,7 +253,7 @@ export class LeasingTrackerCardEditor extends LitElement {
         .hass=${this.hass}
         .data=${this.formData}
         .schema=${this.schema}
-        .computeLabel=${(schema: { name: string }) => LeasingTrackerCard.getConfigLabel(schema.name)}
+        .computeLabel=${(schema: { name: string }) => LeasingTrackerCard.getConfigLabel(schema.name, this.hass?.locale?.language)}
         @value-changed=${this.valueChanged}
       ></ha-form>
     `;

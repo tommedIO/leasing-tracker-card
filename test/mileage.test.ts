@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { calculateExtraMileageCost, calculateMileagePercent, calculateTargetKilometers } from "../src/mileage";
+import { getLanguage, localize } from "../src/localize/localize";
 
 describe("calculateTargetKilometers", () => {
   it("calculates the linear target for the middle of a lease", () => {
@@ -29,5 +30,12 @@ describe("calculateTargetKilometers", () => {
     expect(calculateMileagePercent(12000, 10000)).toBe(100);
     expect(calculateMileagePercent(-100, 10000)).toBe(0);
     expect(calculateMileagePercent(100, 0)).toBeNull();
+  });
+
+  it("localizes German, English, and unknown languages with an English fallback", () => {
+    expect(getLanguage("de-DE")).toBe("de");
+    expect(localize("current_mileage", "de-DE")).toBe("aktueller Kilometerstand");
+    expect(localize("current_mileage", "en-US")).toBe("Current mileage");
+    expect(localize("current_mileage", "fr-FR")).toBe("Current mileage");
   });
 });
