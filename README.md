@@ -72,6 +72,8 @@ max(0, current_km - target_km) * extra_km_cost_cents / 100
 
 The current odometer is shown in red when it exceeds the target and in green otherwise.
 
+Clicking the current odometer value opens Home Assistant's details and history view for the configured odometer entity.
+
 The visual editor stores both display options with the card. They are enabled by default, including for cards created before these options were added.
 
 The card currently displays the entity's current value and the calculated target value. Dates outside the lease can intentionally produce values below zero or above the total, matching the formula.

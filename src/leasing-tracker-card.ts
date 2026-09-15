@@ -85,6 +85,15 @@ export class LeasingTrackerCard extends LitElement {
     };
   }
 
+  private readonly openEntityDetails = (): void => {
+    if (!this.config?.entity) return;
+    this.dispatchEvent(new CustomEvent("hass-more-info", {
+      detail: { entityId: this.config.entity },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+
   public getCardSize(): number {
     return 4;
   }
@@ -126,7 +135,15 @@ export class LeasingTrackerCard extends LitElement {
           ${this.config.show_values !== false ? html`<div class="mileage-grid">
             <div class="metric">
               <div class="label">aktueller Kilometerstand</div>
-              <div class="${currentClass}">${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>
+              <div
+                class="${currentClass} value--interactive"
+                role="button"
+                tabindex="0"
+                @click=${this.openEntityDetails}
+                @keydown=${(event: KeyboardEvent) => {
+                  if (event.key === "Enter" || event.key === " ") this.openEntityDetails();
+                }}
+              >${Number.isFinite(current) ? current.toLocaleString() : "Nicht verfügbar"} <span>${unit}</span></div>
             </div>
             <div class="metric">
               <div class="label">Sollkilometerstand</div>
@@ -160,6 +177,7 @@ export class LeasingTrackerCard extends LitElement {
     .value span { font-size: 16px; font-weight: 400; }
     .value--over { color: var(--error-color, #db4437); }
     .value--under { color: var(--success-color, #43a047); }
+    .value--interactive { cursor: pointer; }
     .mileage-bar { background: var(--divider-color); border-radius: 3px; height: 12px; margin-top: 24px; overflow: visible; position: relative; }
     .mileage-bar__fill { border-radius: 3px; height: 100%; min-width: 0; }
     .mileage-bar__fill--under { background: var(--success-color, #43a047); }
@@ -174,7 +192,7 @@ export class LeasingTrackerCard extends LitElement {
 @customElement("leasing-tracker-card-editor")
 export class LeasingTrackerCardEditor extends LitElement {
   @property({ attribute: false }) public hass?: HomeAssistant;
-  @state() private config: Partial<LeasingTrackerConfig> = {};
+  @property({ attribute: false }) public config: Partial<LeasingTrackerConfig> = {};
 
   public setConfig(config: Partial<LeasingTrackerConfig>): void {
     this.config = {
@@ -185,6 +203,7 @@ export class LeasingTrackerCardEditor extends LitElement {
       show_extra_cost: true,
       ...config,
     };
+    this.requestUpdate("config");
   }
 
   private readonly schema = [

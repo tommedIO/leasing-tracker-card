@@ -254,22 +254,22 @@ var v = class extends HTMLElement {
 v.elementStyles = [], v.shadowRootOptions = { mode: "open" }, v[m("elementProperties")] = /* @__PURE__ */ new Map(), v[m("finalized")] = /* @__PURE__ */ new Map(), ie?.({ ReactiveElement: v }), (f.reactiveElementVersions ??= []).push("2.1.2");
 //#endregion
 //#region node_modules/lit-html/lit-html.js
-var y = globalThis, b = (e) => e, x = y.trustedTypes, S = x ? x.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, C = "$lit$", w = `lit$${Math.random().toFixed(9).slice(2)}$`, T = "?" + w, ae = `<${T}>`, E = document, D = () => E.createComment(""), O = (e) => e === null || typeof e != "object" && typeof e != "function", k = Array.isArray, oe = (e) => k(e) || typeof e?.[Symbol.iterator] == "function", A = "[ 	\n\f\r]", j = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, se = /-->/g, ce = />/g, M = RegExp(`>|${A}(?:([^\\s"'>=/]+)(${A}*=${A}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), le = /'/g, ue = /"/g, N = /^(?:script|style|textarea|title)$/i, P = ((e) => (t, ...n) => ({
+var y = globalThis, b = (e) => e, x = y.trustedTypes, ae = x ? x.createPolicy("lit-html", { createHTML: (e) => e }) : void 0, S = "$lit$", C = `lit$${Math.random().toFixed(9).slice(2)}$`, w = "?" + C, oe = `<${w}>`, T = document, E = () => T.createComment(""), D = (e) => e === null || typeof e != "object" && typeof e != "function", O = Array.isArray, se = (e) => O(e) || typeof e?.[Symbol.iterator] == "function", k = "[ 	\n\f\r]", A = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, ce = /-->/g, j = />/g, M = RegExp(`>|${k}(?:([^\\s"'>=/]+)(${k}*=${k}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`, "g"), le = /'/g, ue = /"/g, N = /^(?:script|style|textarea|title)$/i, P = ((e) => (t, ...n) => ({
 	_$litType$: e,
 	strings: t,
 	values: n
-}))(1), F = Symbol.for("lit-noChange"), I = Symbol.for("lit-nothing"), L = /* @__PURE__ */ new WeakMap(), R = E.createTreeWalker(E, 129);
+}))(1), F = Symbol.for("lit-noChange"), I = Symbol.for("lit-nothing"), L = /* @__PURE__ */ new WeakMap(), R = T.createTreeWalker(T, 129);
 function z(e, t) {
-	if (!k(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
-	return S === void 0 ? t : S.createHTML(t);
+	if (!O(e) || !e.hasOwnProperty("raw")) throw Error("invalid template strings array");
+	return ae === void 0 ? t : ae.createHTML(t);
 }
 var de = (e, t) => {
-	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = j;
+	let n = e.length - 1, r = [], i, a = t === 2 ? "<svg>" : t === 3 ? "<math>" : "", o = A;
 	for (let t = 0; t < n; t++) {
 		let n = e[t], s, c, l = -1, u = 0;
-		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === j ? c[1] === "!--" ? o = se : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = M) : (N.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = M) : o = ce : o === M ? c[0] === ">" ? (o = i ?? j, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? M : c[3] === "\"" ? ue : le) : o === ue || o === le ? o = M : o === se || o === ce ? o = j : (o = M, i = void 0);
+		for (; u < n.length && (o.lastIndex = u, c = o.exec(n), c !== null);) u = o.lastIndex, o === A ? c[1] === "!--" ? o = ce : c[1] === void 0 ? c[2] === void 0 ? c[3] !== void 0 && (o = M) : (N.test(c[2]) && (i = RegExp("</" + c[2], "g")), o = M) : o = j : o === M ? c[0] === ">" ? (o = i ?? A, l = -1) : c[1] === void 0 ? l = -2 : (l = o.lastIndex - c[2].length, s = c[1], o = c[3] === void 0 ? M : c[3] === "\"" ? ue : le) : o === ue || o === le ? o = M : o === ce || o === j ? o = A : (o = M, i = void 0);
 		let d = o === M && e[t + 1].startsWith("/>") ? " " : "";
-		a += o === j ? n + ae : l >= 0 ? (r.push(s), n.slice(0, l) + C + n.slice(l) + w + d) : n + w + (l === -2 ? t : d);
+		a += o === A ? n + oe : l >= 0 ? (r.push(s), n.slice(0, l) + S + n.slice(l) + C + d) : n + C + (l === -2 ? t : d);
 	}
 	return [z(e, a + (e[n] || "<?>") + (t === 2 ? "</svg>" : t === 3 ? "</math>" : "")), r];
 }, B = class e {
@@ -283,8 +283,8 @@ var de = (e, t) => {
 		}
 		for (; (i = R.nextNode()) !== null && c.length < s;) {
 			if (i.nodeType === 1) {
-				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(C)) {
-					let t = u[o++], n = i.getAttribute(e).split(w), r = /([.?@])?(.*)/.exec(t);
+				if (i.hasAttributes()) for (let e of i.getAttributeNames()) if (e.endsWith(S)) {
+					let t = u[o++], n = i.getAttribute(e).split(C), r = /([.?@])?(.*)/.exec(t);
 					c.push({
 						type: 1,
 						index: a,
@@ -292,45 +292,45 @@ var de = (e, t) => {
 						strings: n,
 						ctor: r[1] === "." ? pe : r[1] === "?" ? me : r[1] === "@" ? he : U
 					}), i.removeAttribute(e);
-				} else e.startsWith(w) && (c.push({
+				} else e.startsWith(C) && (c.push({
 					type: 6,
 					index: a
 				}), i.removeAttribute(e));
 				if (N.test(i.tagName)) {
-					let e = i.textContent.split(w), t = e.length - 1;
+					let e = i.textContent.split(C), t = e.length - 1;
 					if (t > 0) {
 						i.textContent = x ? x.emptyScript : "";
-						for (let n = 0; n < t; n++) i.append(e[n], D()), R.nextNode(), c.push({
+						for (let n = 0; n < t; n++) i.append(e[n], E()), R.nextNode(), c.push({
 							type: 2,
 							index: ++a
 						});
-						i.append(e[t], D());
+						i.append(e[t], E());
 					}
 				}
 			} else if (i.nodeType === 8) {
-				if (i.data === T) c.push({
+				if (i.data === w) c.push({
 					type: 2,
 					index: a
 				});
 				else {
 					let e = -1;
-					for (; (e = i.data.indexOf(w, e + 1)) !== -1;) c.push({
+					for (; (e = i.data.indexOf(C, e + 1)) !== -1;) c.push({
 						type: 7,
 						index: a
-					}), e += w.length - 1;
+					}), e += C.length - 1;
 				}
 			}
 			a++;
 		}
 	}
 	static createElement(e, t) {
-		let n = E.createElement("template");
+		let n = T.createElement("template");
 		return n.innerHTML = e, n;
 	}
 };
 function V(e, t, n = e, r) {
 	if (t === F) return t;
-	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = O(t) ? void 0 : t._$litDirective$;
+	let i = r === void 0 ? n._$Cl : n._$Co?.[r], a = D(t) ? void 0 : t._$litDirective$;
 	return i?.constructor !== a && (i?._$AO?.(!1), a === void 0 ? i = void 0 : (i = new a(e), i._$AT(e, n, r)), r === void 0 ? n._$Cl = i : (n._$Co ??= [])[r] = i), i !== void 0 && (t = V(e, i._$AS(e, t.values), i, r)), t;
 }
 var fe = class {
@@ -344,7 +344,7 @@ var fe = class {
 		return this._$AM._$AU;
 	}
 	u(e) {
-		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? E).importNode(t, !0);
+		let { el: { content: t }, parts: n } = this._$AD, r = (e?.creationScope ?? T).importNode(t, !0);
 		R.currentNode = r;
 		let i = R.nextNode(), a = 0, o = 0, s = n[0];
 		for (; s !== void 0;) {
@@ -354,7 +354,7 @@ var fe = class {
 			}
 			a !== s?.index && (i = R.nextNode(), a++);
 		}
-		return R.currentNode = E, r;
+		return R.currentNode = T, r;
 	}
 	p(e) {
 		let t = 0;
@@ -378,7 +378,7 @@ var fe = class {
 		return this._$AB;
 	}
 	_$AI(e, t = this) {
-		e = V(this, e, t), O(e) ? e === I || e == null || e === "" ? (this._$AH !== I && this._$AR(), this._$AH = I) : e !== this._$AH && e !== F && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? oe(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
+		e = V(this, e, t), D(e) ? e === I || e == null || e === "" ? (this._$AH !== I && this._$AR(), this._$AH = I) : e !== this._$AH && e !== F && this._(e) : e._$litType$ === void 0 ? e.nodeType === void 0 ? se(e) ? this.k(e) : this._(e) : this.T(e) : this.$(e);
 	}
 	O(e) {
 		return this._$AA.parentNode.insertBefore(e, this._$AB);
@@ -387,7 +387,7 @@ var fe = class {
 		this._$AH !== e && (this._$AR(), this._$AH = this.O(e));
 	}
 	_(e) {
-		this._$AH !== I && O(this._$AH) ? this._$AA.nextSibling.data = e : this.T(E.createTextNode(e)), this._$AH = e;
+		this._$AH !== I && D(this._$AH) ? this._$AA.nextSibling.data = e : this.T(T.createTextNode(e)), this._$AH = e;
 	}
 	$(e) {
 		let { values: t, _$litType$: n } = e, r = typeof n == "number" ? this._$AC(e) : (n.el === void 0 && (n.el = B.createElement(z(n.h, n.h[0]), this.options)), n);
@@ -402,9 +402,9 @@ var fe = class {
 		return t === void 0 && L.set(e.strings, t = new B(e)), t;
 	}
 	k(t) {
-		k(this._$AH) || (this._$AH = [], this._$AR());
+		O(this._$AH) || (this._$AH = [], this._$AR());
 		let n = this._$AH, r, i = 0;
-		for (let a of t) i === n.length ? n.push(r = new e(this.O(D()), this.O(D()), this, this.options)) : r = n[i], r._$AI(a), i++;
+		for (let a of t) i === n.length ? n.push(r = new e(this.O(E()), this.O(E()), this, this.options)) : r = n[i], r._$AI(a), i++;
 		i < n.length && (this._$AR(r && r._$AB.nextSibling, i), n.length = i);
 	}
 	_$AR(e = this._$AA.nextSibling, t) {
@@ -428,10 +428,10 @@ var fe = class {
 	}
 	_$AI(e, t = this, n, r) {
 		let i = this.strings, a = !1;
-		if (i === void 0) e = V(this, e, t, 0), a = !O(e) || e !== this._$AH && e !== F, a && (this._$AH = e);
+		if (i === void 0) e = V(this, e, t, 0), a = !D(e) || e !== this._$AH && e !== F, a && (this._$AH = e);
 		else {
 			let r = e, o, s;
-			for (e = i[0], o = 0; o < i.length - 1; o++) s = V(this, r[n + o], t, o), s === F && (s = this._$AH[o]), a ||= !O(s) || s !== this._$AH[o], s === I ? e = I : e !== I && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
+			for (e = i[0], o = 0; o < i.length - 1; o++) s = V(this, r[n + o], t, o), s === F && (s = this._$AH[o]), a ||= !D(s) || s !== this._$AH[o], s === I ? e = I : e !== I && (e += (s ?? "") + i[o + 1]), this._$AH[o] = s;
 		}
 		a && !r && this.j(e);
 	}
@@ -480,7 +480,7 @@ var ve = (e, t, n) => {
 	let r = n?.renderBefore ?? t, i = r._$litPart$;
 	if (i === void 0) {
 		let e = n?.renderBefore ?? null;
-		r._$litPart$ = i = new H(t.insertBefore(D(), e), e, void 0, n ?? {});
+		r._$litPart$ = i = new H(t.insertBefore(E(), e), e, void 0, n ?? {});
 	}
 	return i._$AI(e), i;
 }, W = globalThis, G = class extends v {
@@ -551,7 +551,7 @@ function q(e) {
 }
 //#endregion
 //#region node_modules/@lit/reactive-element/decorators/state.js
-function J(e) {
+function Se(e) {
 	return q({
 		...e,
 		state: !0,
@@ -560,7 +560,7 @@ function J(e) {
 }
 //#endregion
 //#region src/mileage.ts
-function Y(e, t) {
+function J(e, t) {
 	let [n, r, i] = e.split("-").map(Number), a = Date.UTC(n, r - 1, i), o = new Intl.DateTimeFormat("en-US", {
 		timeZone: t,
 		year: "numeric",
@@ -573,18 +573,18 @@ function Y(e, t) {
 	}).formatToParts(new Date(a)), s = Object.fromEntries(o.map(({ type: e, value: t }) => [e, t]));
 	return a + (a - Date.UTC(Number(s.year), Number(s.month) - 1, Number(s.day), Number(s.hour), Number(s.minute), Number(s.second)));
 }
-function Se(e, t, n, r, i) {
-	let a = Y(t, i), o = Y(n, i), s = o - a;
+function Ce(e, t, n, r, i) {
+	let a = J(t, i), o = J(n, i), s = o - a;
 	if (!Number.isFinite(r) || s <= 0) return null;
 	if (e <= a) return 0;
 	if (e >= o) return Math.round(r);
 	let c = e - a;
 	return Math.round(c / s * r);
 }
-function Ce(e, t, n) {
+function we(e, t, n) {
 	return Math.max(0, e - t) * n / 100;
 }
-function we(e, t) {
+function Y(e, t) {
 	return !Number.isFinite(e) || !Number.isFinite(t) || t <= 0 ? null : Math.min(100, Math.max(0, e / t * 100));
 }
 //#endregion
@@ -630,14 +630,28 @@ var Z = class extends G {
 		return document.createElement("leasing-tracker-card-editor");
 	}
 	setConfig(e) {
-		this.config = {
-			type: "custom:leasing-tracker-card",
+		let t = {
 			extra_km_cost_cents: 0,
 			show_values: !0,
 			show_graph: !0,
 			show_extra_cost: !0,
 			...e
 		};
+		if (!t.entity || !t.start_date || !t.end_date || t.total_km === void 0 || !Number.isFinite(t.total_km) || t.total_km < 0 || !Number.isFinite(t.extra_km_cost_cents) || t.extra_km_cost_cents < 0) throw Error("Leasing Tracker Card benötigt Entität, Startdatum, Enddatum, Freikilometer und Kosten Mehrkilometer.");
+		this.config = {
+			type: "custom:leasing-tracker-card",
+			...t
+		};
+	}
+	openEntityDetails = () => {
+		this.config?.entity && this.dispatchEvent(new CustomEvent("hass-more-info", {
+			detail: { entityId: this.config.entity },
+			bubbles: !0,
+			composed: !0
+		}));
+	};
+	getCardSize() {
+		return 4;
 	}
 	connectedCallback() {
 		super.connectedCallback(), this.refreshTimer = window.setInterval(() => this.requestUpdate(), 6e4);
@@ -648,14 +662,22 @@ var Z = class extends G {
 	render() {
 		if (!this.hass || !this.config) return P``;
 		if (!this.config.entity || !this.config.start_date || !this.config.end_date || this.config.total_km === void 0) return P`<ha-card><div class="content">Bitte die Kartenkonfiguration vervollständigen.</div></ha-card>`;
-		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Se(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi"), i = n === null || !Number.isFinite(t) || this.config.extra_km_cost_cents === void 0 ? null : Ce(t, n, this.config.extra_km_cost_cents), a = n !== null && t > n ? "value value--over" : "value value--under", o = we(t, this.config.total_km), s = n === null ? null : we(n, this.config.total_km);
+		let e = this.hass.states[this.config.entity], t = Number(e?.state), n = Ce(Date.now(), this.config.start_date, this.config.end_date, this.config.total_km, this.hass.config.time_zone), r = e?.attributes.unit_of_measurement || (this.hass.config.unit_system.length === "km" ? "km" : "mi"), i = n === null || !Number.isFinite(t) || this.config.extra_km_cost_cents === void 0 ? null : we(t, n, this.config.extra_km_cost_cents), a = n !== null && t > n ? "value value--over" : "value value--under", o = Y(t, this.config.total_km), s = n === null ? null : Y(n, this.config.total_km);
 		return P`
       <ha-card>
         <div class="content">
           ${this.config.show_values === !1 ? I : P`<div class="mileage-grid">
             <div class="metric">
               <div class="label">aktueller Kilometerstand</div>
-              <div class="${a}">${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
+              <div
+                class="${a} value--interactive"
+                role="button"
+                tabindex="0"
+                @click=${this.openEntityDetails}
+                @keydown=${(e) => {
+			(e.key === "Enter" || e.key === " ") && this.openEntityDetails();
+		}}
+              >${Number.isFinite(t) ? t.toLocaleString() : "Nicht verfügbar"} <span>${r}</span></div>
             </div>
             <div class="metric">
               <div class="label">Sollkilometerstand</div>
@@ -691,6 +713,7 @@ var Z = class extends G {
     .value span { font-size: 16px; font-weight: 400; }
     .value--over { color: var(--error-color, #db4437); }
     .value--under { color: var(--success-color, #43a047); }
+    .value--interactive { cursor: pointer; }
     .mileage-bar { background: var(--divider-color); border-radius: 3px; height: 12px; margin-top: 24px; overflow: visible; position: relative; }
     .mileage-bar__fill { border-radius: 3px; height: 100%; min-width: 0; }
     .mileage-bar__fill--under { background: var(--success-color, #43a047); }
@@ -701,7 +724,7 @@ var Z = class extends G {
     .cost strong { color: var(--primary-text-color); }
   `;
 };
-X([q({ attribute: !1 })], Z.prototype, "hass", void 0), X([J()], Z.prototype, "config", void 0), Z = X([K("leasing-tracker-card")], Z);
+X([q({ attribute: !1 })], Z.prototype, "hass", void 0), X([Se()], Z.prototype, "config", void 0), Z = X([K("leasing-tracker-card")], Z);
 var Q = class extends G {
 	hass;
 	config = {};
@@ -713,7 +736,7 @@ var Q = class extends G {
 			show_graph: !0,
 			show_extra_cost: !0,
 			...e
-		};
+		}, this.requestUpdate("config");
 	}
 	schema = [
 		{
@@ -801,13 +824,13 @@ var Q = class extends G {
     ` : I;
 	}
 };
-X([q({ attribute: !1 })], Q.prototype, "hass", void 0), X([J()], Q.prototype, "config", void 0), Q = X([K("leasing-tracker-card-editor")], Q);
+X([q({ attribute: !1 })], Q.prototype, "hass", void 0), X([q({ attribute: !1 })], Q.prototype, "config", void 0), Q = X([K("leasing-tracker-card-editor")], Q);
 var $ = window;
 $.customCards = $.customCards ?? [], $.customCards.push({
 	type: "leasing-tracker-card",
 	name: "Leasing Tracker Card",
 	description: "Zeigt aktuellen und zeitbasierten Sollkilometerstand.",
-	preview: !1
+	preview: !0
 });
 //#endregion
 export { Z as LeasingTrackerCard, Q as LeasingTrackerCardEditor };
